@@ -21,6 +21,7 @@
     "express": "^4.17.3",
     "mongoose": "^6.2.6",
     "slugifi": "^1.0.7",
-    "slugify": "^1.6.5"
+    "slugify": "^1.6.5",
+    "uuid": "^8.3.2"
   }
 }

@@ -3,16 +3,19 @@ import productRouter from './routes/product';
 import categoryRouter from './routes/category';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import authRouter from './routes/auth';
 
 const app = express();
 
 // middleware
 app.use(express.json());
 app.use(cors());
+app.use(morgan('tiny'));
 
 // Routing
 app.use("/api", productRouter);
 app.use("/api", categoryRouter);
+app.use("/api", authRouter)
 // connect database
 mongoose.connect("mongodb://localhost:27017/Nodejs")
   .then(() => console.log("Connect db thanh cong"))
