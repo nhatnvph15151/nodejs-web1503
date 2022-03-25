@@ -1,41 +1,40 @@
-import mongoose,{Schema} from "mongoose";
-import { v4 as uuidv4 } from 'uuid';
-
-
+import mongoose, { Schema } from "mongoose";
+import { createHmac } from 'crypto';
 const userSchema = new Schema({
-    name:{
-       type : String,
-       required :true,
-       maxlength : 30 
-    },
-    email:{
+    name: {
         type: String,
-        required: true,
-        unique : true 
+        trim: true,
+        required: true
     },
-    salt:{
-        type :String
+    email: {
+        type: String,
+        required: true
     },
-    password:{
-        type : String,
-        required :true
+    password: {
+        type: String,
+        required: true
     }
-},{timestamps :true});
-
-userSchema.method = {
-    authenticate (password) {
-        return this.encryptPassword(password) == this.password;
+}, { timestamps: true });
+userSchema.methods = {
+    authenticate(password) {
+        return this.password == this.encrytPassword(password);
     },
-    
+    encrytPassword(password) {
+        if (!password) return
+        try {
+            return createHmac('sha256', '123456').update(password).digest('hex');
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
-userSchema.pre("save",async function save(next){
+userSchema.pre("save", function (next) {
     try {
-        this.salt = uuidv4();
-        this.password = this.encryptPassword(this.password);
-        return next();
+        this.password = this.encrytPassword(this.password);
+        next();
     } catch (error) {
-        return next(error)
-    }
-});
 
-export default mongoose.model('User', userSchema);
+    }
+})
+
+export default mongoose.model("User", userSchema);

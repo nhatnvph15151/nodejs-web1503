@@ -1,9 +1,9 @@
 import User from "../models/user";
 
 export const signup = async (req ,res )=>{
+    const { name, email, password } = req.body;
     try {
-        const {name,email,password}= req.body;
-
+        //kiem tra user
         const existUser = await User.findOne({email}).exec();
         if (existUser){
             req.json({
@@ -26,5 +26,25 @@ export const signup = async (req ,res )=>{
 }
 
 export const signin = async (req, res) => {
-    
+    const {email,password} = req.body;
+    const user = await User.findOne({email}).exec;
+    if(!user){
+        res.status(4001).json({
+            message:"user ko ton tai"
+        })
+    }
+    if (!user.authenticate(password)){
+        res.status(401).json({
+            message:"mat khau khong dung"
+        })
+    }
 }
+const token = jwb.sign({ email }, "12356", { expiresIn: 60 * 60})
+res.json({
+    token,
+    user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email
+    }
+})
